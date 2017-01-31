@@ -10,6 +10,7 @@ var connection = mysql.createConnection({
 	password: "******",
 	database: "bamazon_bookstore"
 });
+
 connection.connect(function(err) {
 	if (err) throw err;
 });
@@ -89,7 +90,7 @@ function purchaserQuery() {
 					var complete = info.complete;
 
 					if (complete) {
-						console.log("Thank you for shopping with Bamazon.");
+						console.log("Thank you for shopping with the Bamazon Bookstore.");
 						connection.end();
 					} else {
 						runProcess();
