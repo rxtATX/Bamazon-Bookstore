@@ -1,8 +1,8 @@
 'use strict';
-
+//Require the NPMs
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+//Create the connection object for the MySQL database we're using
 var connection = mysql.createConnection({
 	host: "localhost",
 	port: 3306,
@@ -10,14 +10,15 @@ var connection = mysql.createConnection({
 	password: "******",
 	database: "bamazon_bookstore"
 });
-
+//Actually connecting to server
 connection.connect(function(err) {
 	if (err) throw err;
 });
-
+//Calls function which starts the entire application
 runEntireProcess();
-
+//This function holds all processes necessary for application to run
 function runEntireProcess() {
+	//Array which will pull from the database and input all department names (variable for in situations where departments are added by manager)
 	var selections =[];
 	connection.query("SELECT department_name FROM departments", function(err, res) {
 		if (err) throw err;
@@ -25,7 +26,7 @@ function runEntireProcess() {
 			selections.push(res[i].department_name);
 		}
 	});
-
+	//Options for user. When conditions in place to fire the proper questions based on what user is trying to accomplish
 	inquirer.prompt([
 	{
 		type: "list",
@@ -117,6 +118,7 @@ function runEntireProcess() {
 		}
 	}
 	]).then(function(info) {
+		//Store input values into userable variables
 		if (info.textbook) {
 			info.department = "Textbook";
 		}
@@ -126,7 +128,7 @@ function runEntireProcess() {
 		var quantity = parseFloat(info.quantity);
 		var price = info.price;
 		var department = info.department;
-
+		//All these if statements depend on the initial section by the user and will either display the information requested, or store the input into the affected tables within the database
 		if (info.query === "View Products for Sale.") {
 			connection.query("SELECT * FROM products", function(err, res) {
 				if (err) throw err;
@@ -173,12 +175,12 @@ function runEntireProcess() {
 				console.log("You have added " + quantity + " of '" + title + "' to the " + department + " department to be sold for $" + price + " each.");
 				}
 			});
-
+			
 			terminateConnection();
 		}
 	});
 }
-
+//Function to end connection includes option to relaunch entire application
 function terminateConnection() {
 	inquirer.prompt([
 		{

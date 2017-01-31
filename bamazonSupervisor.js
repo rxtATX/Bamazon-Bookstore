@@ -1,8 +1,8 @@
 'use strict';
-
+//Require the NPMs
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+//Create the connection object for the MySQL database we're using
 var connection = mysql.createConnection({
 	host: "localhost",
 	port: 3306,
@@ -10,13 +10,13 @@ var connection = mysql.createConnection({
 	password: "******",
 	database: "bamazon_bookstore"
 });
-
+//Actually connecting to server
 connection.connect(function(err) {
 	if (err) throw err;
 });
-
+//Calls function which starts the entire application
 handleSupervisorInputs();
-
+//This function holds all processes necessary for application to run
 function handleSupervisorInputs() {
 	inquirer.prompt([
 		{
@@ -26,6 +26,7 @@ function handleSupervisorInputs() {
 			choices: ["View Product Sales by Department.", "Create New Department."]
 		}
 	]).then(function(info) {
+		//These if statements depend on the initial section by the user and will either display the information requested, or store the input into the affected tables within the database
 		if (info.query === "View Product Sales by Department.") {
 			connection.query("SELECT * FROM departments", function(err, res) {
 				if (err) throw err;
@@ -47,7 +48,7 @@ function handleSupervisorInputs() {
 		}
 	});
 }
-
+//If the user wants to alter the information stored on the database, this function will run
 function departmentInputs() {
 	inquirer.prompt([
 		{
@@ -58,7 +59,7 @@ function departmentInputs() {
 	]).then(function(info) {
 		var newName = info.newDept;
 		var valid;
-
+		//Validation to ensure an existing department name will not be duplicated
 		connection.query("SELECT department_name FROM departments", function(err, res) {
 			if (err) throw err;
 
@@ -86,12 +87,13 @@ function departmentInputs() {
 				]).then(function(info) {
 					var sales = 0;
 					var OHC = info.overhead;
+					//Object which holds all new information input by user
 					var newDeptData = {
 						department_name: newName,
 						over_head_costs: OHC,
 						total_sales: sales
 					};
-
+					//Updates the database with the object
 					connection.query("INSERT INTO departments SET ?", newDeptData, function(err, res) {
 						if (err) throw err;
 					});
@@ -99,13 +101,14 @@ function departmentInputs() {
 					terminateConnection();
 				});
 			} else {
+				//If the department already exists the user may try again
 				console.log("That department already exists.");
 				departmentInputs();
 			}
 		});	
 	});
 }
-
+//Function to end connection includes option to relaunch entire application
 function terminateConnection() {
 	inquirer.prompt([
 		{
