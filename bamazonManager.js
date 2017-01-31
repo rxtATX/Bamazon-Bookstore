@@ -18,6 +18,14 @@ connection.connect(function(err) {
 runEntireProcess();
 
 function runEntireProcess() {
+	var selections =[];
+	connection.query("SELECT department_name FROM departments", function(err, res) {
+		if (err) throw err;
+		for (var i = 0; i < res.length; i++) {
+			selections.push(res[i].department_name);
+		}
+	});
+
 	inquirer.prompt([
 	{
 		type: "list",
@@ -60,7 +68,7 @@ function runEntireProcess() {
 		type: "list",
 		name: "department",
 		message: "In which department does this product belong?",
-		choices: ["Award Winners", "Bargain Books", "Children's Books", "Books in Spanish"],
+		choices: selections,
 		when: function(answer) {
 			return !(answer.textbook);
 		},
