@@ -14,7 +14,7 @@ connection.connect(function(err) {
 	if (err) throw err;
 });
 
-var cost = 0;
+var runningTotal = 0;
 
 runProcess();
 
@@ -63,18 +63,22 @@ function purchaserQuery() {
 	var item = info.query;
 	var quantity = info.quantity;
 	
-	//creat function to input string add title create var = stringid:+id while var.length is < 5 var = var + " " return var;
-
 	connection.query("SELECT * FROM products WHERE item_id = ? ", item, function(err, res) {
 			if (err) throw err;
+			var department = res[0].department_name;
 			var stock = res[0].stock_quantity;
 			if (stock >= quantity) {
 				var stockTotal = stock - quantity;
 				var price = res[0].price;
-				cost = cost + quantity * price;
+				var cost = quantity * price;
 
-				console.log("Your total comes to $" + cost);
+				connection.query("UPDATE departments SET ? WHERE ?", [{total_sales: cost}, {department_name: department}], function(err, res) {});
+
+				runningTotal = runningTotal + cost;
+				console.log("Your total comes to $" + runningTotal);
+
 				connection.query("UPDATE products SET ? WHERE ?", [{stock_quantity: stockTotal}, {item_id: item}], function(err, res) {});
+
 				inquirer.prompt([
 					{
 						type: "confirm",
