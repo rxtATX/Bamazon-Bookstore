@@ -7,7 +7,7 @@ var connection = mysql.createConnection({
 	host: "localhost",
 	port: 3306,
 	user: "root",
-	password: "******",
+	password: "***",
 	database: "bamazon_bookstore"
 });
 //Actually connecting to server
@@ -21,7 +21,7 @@ runProcess();
 //This function holds the two functions necessary for application: displaying the available products, and a time-delayed prompt for customer input.
 function runProcess() {
 	displayTable();
-	setTimeout(purchaserQuery, 800);	
+	setTimeout(purchaserQuery, 500);	
 }
 //Show table
 function displayTable() {
