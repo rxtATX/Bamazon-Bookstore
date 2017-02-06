@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS products (
 , product_name VARCHAR(100) NOT NULL
 , author_name VARCHAR(100) NULL
 , department_name VARCHAR(30) NULL
-, price FLOAT(12) NOT NULL
+, price DECIMAL(10, 2) NOT NULL
 , stock_quantity INT(30) NOT NULL
 );
 
